@@ -8,6 +8,8 @@ const StudentProfile = require('./models/StudentProfile');
 const profileRoutes = require('./routes/profileRoutes');
 const authRoutes = require('./routes/authRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
+const driveRoutes = require('./routes/driveRoutes');
+const Drive = require('./models/Drive');
 const app = express();
 
 // Connect to MongoDB
@@ -27,6 +29,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/resume', resumeRoutes);
+app.use('/api/drives', driveRoutes);
 
 // Global error handler — catches errors passed via next(err), including multer errors
 app.use((err, req, res, next) => {
