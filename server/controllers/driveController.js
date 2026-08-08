@@ -1,6 +1,7 @@
 const Drive = require('../models/Drive');
 const StudentProfile = require('../models/StudentProfile');
 const { checkEligibility } = require('../services/eligibilityService');
+const User = require('../models/User');
 
 const createDrive = async (req, res) => {
   try {
@@ -69,4 +70,42 @@ const listDrives = async (req, res) => {
   }
 };
 
-module.exports = { createDrive, listDrives };
+// GET /api/drives/:driveId/eligible-students — TPO view of who qualifies for a drive
+const getEligibleStudents = async (req, res) => {
+  try {
+    const { driveId } = req.params;
+
+    const drive = await Drive.findById(driveId);
+    if (!drive) {
+      return res.status(404).json({ message: 'Drive not found' });
+    }
+
+    // Get every student profile, along with their linked user info (name, email)
+    const profiles = await StudentProfile.find().populate('user', 'name email');
+
+    const eligibleStudents = profiles
+      .map((profile) => {
+        const { eligible, reasons } = checkEligibility(drive, profile);
+        return {
+          studentId: profile.user._id,
+          name: profile.user.name,
+          email: profile.user.email,
+          branch: profile.branch,
+          cgpa: profile.cgpa,
+          eligible,
+          reasons,
+        };
+      })
+      .filter((s) => s.eligible); // only return students who actually qualify
+
+    res.status(200).json({
+      count: eligibleStudents.length,
+      students: eligibleStudents,
+    });
+  } catch (error) {
+    console.error('Get eligible students error:', error);
+    res.status(500).json({ message: 'Server error fetching eligible students' });
+  }
+};
+
+module.exports = { createDrive, listDrives, getEligibleStudents };
