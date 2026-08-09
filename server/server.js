@@ -11,6 +11,8 @@ const resumeRoutes = require('./routes/resumeRoutes');
 const driveRoutes = require('./routes/driveRoutes');
 const Drive = require('./models/Drive');
 const applicationRoutes = require('./routes/applicationRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const app = express();
 
 // Connect to MongoDB
@@ -32,6 +34,8 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/resume', resumeRoutes);
 app.use('/api/drives', driveRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Global error handler — catches errors passed via next(err), including multer errors
 app.use((err, req, res, next) => {

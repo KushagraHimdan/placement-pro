@@ -44,6 +44,13 @@ const applicationSchema = new mongoose.Schema(
       type: [statusHistorySchema],
       default: [],
     },
+    aiMatch: {
+      matchScore: { type: Number },
+      strengths: { type: [String], default: [] },
+      concerns: { type: [String], default: [] },
+      summary: { type: String },
+      scoredAt: { type: Date },
+    },
   },
   { timestamps: true }
 );
