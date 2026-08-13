@@ -19,9 +19,12 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
 
 // Health check route
 app.get('/api/health', (req, res) => {

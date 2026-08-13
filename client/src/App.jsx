@@ -1,31 +1,29 @@
-import { useState } from 'react'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Footer from './components/Footer'
+import { Routes, Route } from 'react-router-dom'
+import Landing from './pages/Landing'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import ProtectedRoute from './components/ProtectedRoute'
+import StudentLayout from './components/StudentLayout'
+import DrivesList from './pages/student/DrivesList'
 
 function App() {
-  const [role, setRole] = useState('student')
-
   return (
-    <div className="min-h-screen bg-paper flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Hero role={role} />
-      </main>
-      <Footer />
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-      <div className="fixed bottom-6 right-6 bg-ink text-paper text-xs rounded-md p-2 flex gap-2 z-50">
-        {['student', 'tpo', 'recruiter'].map((r) => (
-          <button
-            key={r}
-            onClick={() => setRole(r)}
-            className={`px-3 py-1 rounded ${role === r ? 'bg-paper text-ink' : ''}`}
-          >
-            {r}
-          </button>
-        ))}
-      </div>
-    </div>
+      <Route
+        path="/student"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<DrivesList />} />
+      </Route>
+    </Routes>
   )
 }
 
