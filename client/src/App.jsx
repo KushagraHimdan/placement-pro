@@ -5,6 +5,8 @@ import Register from './pages/Register'
 import ProtectedRoute from './components/ProtectedRoute'
 import StudentLayout from './components/StudentLayout'
 import DrivesList from './pages/student/DrivesList'
+import MyApplications from './pages/student/MyApplications'
+import Profile from './pages/student/Profile'
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         }
       >
         <Route path="dashboard" element={<DrivesList />} />
+        <Route path="applications" element={<MyApplications />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   )
