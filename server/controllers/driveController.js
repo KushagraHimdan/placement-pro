@@ -108,4 +108,18 @@ const getEligibleStudents = async (req, res) => {
   }
 };
 
-module.exports = { createDrive, listDrives, getEligibleStudents };
+// GET /api/drives/:driveId — fetch a single drive's full details
+const getDriveById = async (req, res) => {
+  try {
+    const drive = await Drive.findById(req.params.driveId);
+    if (!drive) {
+      return res.status(404).json({ message: 'Drive not found' });
+    }
+    res.status(200).json({ drive });
+  } catch (error) {
+    console.error('Get drive by id error:', error);
+    res.status(500).json({ message: 'Server error fetching drive' });
+  }
+};
+
+module.exports = { createDrive, listDrives, getEligibleStudents, getDriveById };

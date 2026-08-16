@@ -139,4 +139,19 @@ const getMyApplications = async (req, res) => {
   }
 };
 
-module.exports = { applyToDrive, updateApplicationStatus, getMyApplications };
+// GET /api/applications/drive/:driveId — TPO/recruiter views all applicants for a specific drive
+const getApplicationsForDrive = async (req, res) => {
+  try {
+    const { driveId } = req.params;
+    const applications = await Application.find({ drive: driveId })
+      .populate('student', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ applications });
+  } catch (error) {
+    console.error('Get applications for drive error:', error);
+    res.status(500).json({ message: 'Server error fetching applications' });
+  }
+};
+
+module.exports = { applyToDrive, updateApplicationStatus, getMyApplications, getApplicationsForDrive };

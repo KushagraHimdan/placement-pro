@@ -10,6 +10,7 @@ import Profile from "./pages/student/Profile";
 import TPOLayout from "./components/TPOLayout";
 import PostDrive from "./pages/tpo/PostDrive";
 import TPODrivesList from "./pages/tpo/DrivesList";
+import DriveDetail from './pages/tpo/DriveDetail'
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
       >
         <Route path="dashboard" element={<TPODrivesList />} />
         <Route path="post-drive" element={<PostDrive />} />
+        <Route path="drives/:driveId" element={<DriveDetail />} />
       </Route>
     </Routes>
   );
