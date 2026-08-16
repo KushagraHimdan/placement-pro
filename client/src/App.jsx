@@ -11,6 +11,9 @@ import TPOLayout from "./components/TPOLayout";
 import PostDrive from "./pages/tpo/PostDrive";
 import TPODrivesList from "./pages/tpo/DrivesList";
 import DriveDetail from './pages/tpo/DriveDetail'
+import RecruiterLayout from './components/RecruiterLayout'
+import RecruiterDrivesList from './pages/recruiter/DrivesList'
+import RecruiterDriveDetail from './pages/recruiter/DriveDetail'
 
 function App() {
   return (
@@ -43,6 +46,18 @@ function App() {
         <Route path="dashboard" element={<TPODrivesList />} />
         <Route path="post-drive" element={<PostDrive />} />
         <Route path="drives/:driveId" element={<DriveDetail />} />
+      </Route>
+
+      <Route
+        path="/recruiter"
+        element={
+          <ProtectedRoute allowedRoles={['recruiter']}>
+            <RecruiterLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<RecruiterDrivesList />} />
+        <Route path="drives/:driveId" element={<RecruiterDriveDetail />} />
       </Route>
     </Routes>
   );
