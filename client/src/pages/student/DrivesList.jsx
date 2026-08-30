@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
+import EmptyState from '../../components/EmptyState'
 
 export default function DrivesList() {
   const [drives, setDrives] = useState([])
@@ -34,7 +36,7 @@ export default function DrivesList() {
     }
   }
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading drives...</p>
+  if (loading) return <LoadingState label="Loading drives..." />
   if (error) return <p className="text-professional text-sm">{error}</p>
 
   return (
@@ -42,7 +44,7 @@ export default function DrivesList() {
       <h1 className="font-display text-3xl text-ink mb-6">Drives</h1>
 
       {drives.length === 0 ? (
-        <p className="text-slate text-sm">No drives posted yet. Check back soon.</p>
+        <EmptyState message="No drives posted yet. Check back soon." />
       ) : (
         <div className="space-y-4">
           {drives.map((drive) => (

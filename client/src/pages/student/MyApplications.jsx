@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
+import EmptyState from '../../components/EmptyState'
 
 const STATUS_STYLES = {
   applied: 'bg-slate/10 text-slate',
@@ -28,7 +30,7 @@ export default function MyApplications() {
     fetchApplications()
   }, [])
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading applications...</p>
+  if (loading) return <LoadingState label="Loading applications..." />
   if (error) return <p className="text-professional text-sm">{error}</p>
 
   return (
@@ -36,7 +38,7 @@ export default function MyApplications() {
       <h1 className="font-display text-3xl text-ink mb-6">My applications</h1>
 
       {applications.length === 0 ? (
-        <p className="text-slate text-sm">You haven't applied to any drives yet.</p>
+        <EmptyState message="You haven't applied to any drives yet." />
       ) : (
         <div className="space-y-4">
           {applications.map((app) => (

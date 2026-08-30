@@ -23,6 +23,9 @@
   --color-paper: #17152B;
   --color-slate: #A9A7C2;
   --color-line: #2E2B4D;
+  --color-authority: #34C98F;
+  --color-professional: #E0678F;
+  --color-milestone: #F0D98C;
 }
 
 body {

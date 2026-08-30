@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
+import EmptyState from '../../components/EmptyState'
 
 const STATUS_FLOW = {
   applied: ['shortlisted', 'rejected'],
@@ -92,7 +94,7 @@ export default function DriveDetail() {
     URL.revokeObjectURL(url)
   }
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading...</p>
+  if (loading) return <LoadingState label="Loading..." />
   if (!drive) return <p className="text-professional text-sm">Drive not found</p>
 
   return (
@@ -101,7 +103,7 @@ export default function DriveDetail() {
         ← Back to drives
       </Link>
 
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-8">
         <div>
           <h1 className="font-display text-3xl text-ink">{drive.company}</h1>
           <p className="text-slate text-sm mt-1">{drive.role} {drive.package && `· ${drive.package}`}</p>
@@ -131,55 +133,94 @@ export default function DriveDetail() {
       <h2 className="font-display text-xl text-ink mb-4">Applicants ({applications.length})</h2>
 
       {applications.length === 0 ? (
-        <p className="text-slate text-sm">No applications yet.</p>
+        <EmptyState message="No applications yet." />
       ) : (
-        <div className="border border-line rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-slate/5 text-slate text-xs uppercase font-mono">
-              <tr>
-                <th className="text-left px-4 py-3">Name</th>
-                <th className="text-left px-4 py-3">Email</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-left px-4 py-3">AI score</th>
-                <th className="text-left px-4 py-3">Move to</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app) => (
-                <tr key={app._id} className="border-t border-line">
-                  <td className="px-4 py-3 text-ink">{app.student?.name}</td>
-                  <td className="px-4 py-3 text-slate">{app.student?.email}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
-                      {app.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-ink">
-                    {app.aiMatch?.matchScore !== undefined ? `${app.aiMatch.matchScore}/100` : '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    {STATUS_FLOW[app.status].length > 0 ? (
-                      <div className="flex gap-2">
-                        {STATUS_FLOW[app.status].map((nextStatus) => (
-                          <button
-                            key={nextStatus}
-                            onClick={() => handleStatusChange(app._id, nextStatus)}
-                            disabled={updatingId === app._id}
-                            className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
-                          >
-                            {nextStatus}
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-slate">Final</span>
-                    )}
-                  </td>
+        <>
+          {/* Mobile: stacked cards */}
+          <div className="md:hidden space-y-3">
+            {applications.map((app) => (
+              <div key={app._id} className="border border-line rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="text-ink font-medium">{app.student?.name}</p>
+                    <p className="text-slate text-xs">{app.student?.email}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
+                    {app.status}
+                  </span>
+                </div>
+                {app.aiMatch?.matchScore !== undefined && (
+                  <p className="text-xs text-slate font-mono mb-2">AI score: {app.aiMatch.matchScore}/100</p>
+                )}
+                {STATUS_FLOW[app.status].length > 0 ? (
+                  <div className="flex gap-2 mt-2">
+                    {STATUS_FLOW[app.status].map((nextStatus) => (
+                      <button
+                        key={nextStatus}
+                        onClick={() => handleStatusChange(app._id, nextStatus)}
+                        disabled={updatingId === app._id}
+                        className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
+                      >
+                        {nextStatus}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs text-slate">Final</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: full table */}
+          <div className="hidden md:block border border-line rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-slate/5 text-slate text-xs uppercase font-mono">
+                <tr>
+                  <th className="text-left px-4 py-3">Name</th>
+                  <th className="text-left px-4 py-3">Email</th>
+                  <th className="text-left px-4 py-3">Status</th>
+                  <th className="text-left px-4 py-3">AI score</th>
+                  <th className="text-left px-4 py-3">Move to</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {applications.map((app) => (
+                  <tr key={app._id} className="border-t border-line">
+                    <td className="px-4 py-3 text-ink">{app.student?.name}</td>
+                    <td className="px-4 py-3 text-slate">{app.student?.email}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-ink">
+                      {app.aiMatch?.matchScore !== undefined ? `${app.aiMatch.matchScore}/100` : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      {STATUS_FLOW[app.status].length > 0 ? (
+                        <div className="flex gap-2">
+                          {STATUS_FLOW[app.status].map((nextStatus) => (
+                            <button
+                              key={nextStatus}
+                              onClick={() => handleStatusChange(app._id, nextStatus)}
+                              disabled={updatingId === app._id}
+                              className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
+                            >
+                              {nextStatus}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate">Final</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )

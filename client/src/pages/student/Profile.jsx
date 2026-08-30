@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
 
 const BRANCHES = ['Computer Science', 'IT', 'Electronics', 'Mechanical', 'Civil', 'Other']
 
@@ -80,7 +81,7 @@ export default function Profile() {
     }
   }
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading profile...</p>
+  if (loading) return <LoadingState label="Loading profile..." />
   if (!profile) return null
 
   return (

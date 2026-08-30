@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
+import EmptyState from '../../components/EmptyState'
 
 const STATUS_FLOW = {
   applied: ['shortlisted', 'rejected'],
@@ -56,7 +58,7 @@ export default function DriveDetail() {
     }
   }
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading...</p>
+  if (loading) return <LoadingState label="Loading..." />
   if (!drive) return <p className="text-professional text-sm">Drive not found</p>
 
   return (
@@ -74,7 +76,7 @@ export default function DriveDetail() {
       <h2 className="font-display text-xl text-ink mb-4">Applicants ({applications.length})</h2>
 
       {applications.length === 0 ? (
-        <p className="text-slate text-sm">No applications yet.</p>
+        <EmptyState message="No applications yet." />
       ) : (
         <div className="border border-line rounded-lg overflow-hidden">
           <table className="w-full text-sm">

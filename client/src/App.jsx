@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect } from 'react'
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,6 +17,12 @@ import RecruiterDrivesList from './pages/recruiter/DrivesList'
 import RecruiterDriveDetail from './pages/recruiter/DriveDetail'
 
 function App() {
+
+  useEffect(() => {
+  const isDark = localStorage.getItem('theme') === 'dark'
+  document.documentElement.classList.toggle('dark', isDark)
+  }, [])
+  
   return (
     <Routes>
       <Route path="/" element={<Landing />} />

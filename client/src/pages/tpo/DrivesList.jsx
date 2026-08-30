@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../lib/api'
+import LoadingState from '../../components/LoadingState'
+import EmptyState from '../../components/EmptyState'
 
 export default function DrivesList() {
   const [drives, setDrives] = useState([])
@@ -20,7 +22,7 @@ export default function DrivesList() {
     fetchDrives()
   }, [])
 
-  if (loading) return <p className="text-slate text-sm font-mono">Loading drives...</p>
+  if (loading) return <LoadingState label="Loading drives..." />
 
   return (
     <div>
@@ -32,7 +34,7 @@ export default function DrivesList() {
       </div>
 
       {drives.length === 0 ? (
-        <p className="text-slate text-sm">No drives posted yet.</p>
+        <EmptyState message="No drives posted yet." />
       ) : (
         <div className="space-y-3">
           {drives.map((drive) => (
