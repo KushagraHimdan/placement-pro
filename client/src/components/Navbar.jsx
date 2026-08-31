@@ -6,7 +6,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-paper/90 backdrop-blur-sm border-b border-line">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-8 lg:px-12 h-16 flex items-center justify-between">
         <a href="/" className="font-mono text-2xl font-medium tracking-tight text-ink">PlacementPro</a>
 
         <div className="hidden md:flex items-center gap-6">

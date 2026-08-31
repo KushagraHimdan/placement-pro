@@ -1,29 +1,56 @@
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 
 const STAGES = ['Applied', 'Shortlisted', 'Interview', 'Selected']
 
-// zigzag layout, kept well inside the viewBox bounds so labels never clip
-const NODES = [
-  { x: 140, y: 40 },
-  { x: 140, y: 170 },
-  { x: 340, y: 170 },
-  { x: 340, y: 300 },
+const NODES_DESKTOP = [
+  { x: 200, y: 40 },
+  { x: 200, y: 170 },
+  { x: 400, y: 170 },
+  { x: 400, y: 300 },
 ]
 
-const LABEL_OFFSETS = [
+const NODES_MOBILE = [
+  { x: 60, y: 30 },
+  { x: 60, y: 120 },
+  { x: 60, y: 210 },
+  { x: 60, y: 300 },
+]
+
+const LABEL_OFFSETS_DESKTOP = [
   { dx: 22, dy: 4, anchor: 'start' },
   { dx: -22, dy: 4, anchor: 'end' },
   { dx: 0, dy: -22, anchor: 'middle' },
   { dx: 22, dy: 4, anchor: 'start' },
 ]
 
-const PATH_D = NODES.map((n, i) => `${i === 0 ? 'M' : 'L'} ${n.x} ${n.y}`).join(' ')
-const NODE_OPACITY = [0.5, 0.7, 0.9, 1]
+const LABEL_OFFSETS_MOBILE = [
+  { dx: 22, dy: 4, anchor: 'start' },
+  { dx: 22, dy: 4, anchor: 'start' },
+  { dx: 22, dy: 4, anchor: 'start' },
+  { dx: 22, dy: 4, anchor: 'start' },
+]
 
 export default function PipelineVisual({ accentColor = '#4E65FF' }) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  const NODES = isMobile ? NODES_MOBILE : NODES_DESKTOP
+  const LABEL_OFFSETS = isMobile ? LABEL_OFFSETS_MOBILE : LABEL_OFFSETS_DESKTOP
+  const viewBox = isMobile ? '0 0 220 330' : '0 0 520 340'
+
+  const PATH_D = NODES.map((n, i) => `${i === 0 ? 'M' : 'L'} ${n.x} ${n.y}`).join(' ')
+  const NODE_OPACITY = [0.5, 0.7, 0.9, 1]
+
   return (
-    <div className="w-full max-w-lg ml-auto py-6">
-      <svg viewBox="0 0 460 340" className="w-full h-auto" fill="none">
+    <div className="w-full max-w-lg ml-auto mr-2 py-6">
+      <svg viewBox={viewBox} className="w-full h-auto" fill="none">
         <motion.path
           d={PATH_D}
           stroke={accentColor}

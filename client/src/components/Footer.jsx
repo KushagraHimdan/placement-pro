@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className="border-t border-line mt-20">
-      <div className="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-8 lg:px-12 py-12 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <p className="font-mono text-xl font-medium text-ink mb-3">PlacementPro</p>
           <p className="text-sm text-slate max-w-xs">
@@ -29,7 +29,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-line">
-        <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div className="max-w-7xl mx-auto px-8 lg:px-12 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-xs text-slate font-mono">© {new Date().getFullYear()} PlacementPro</p>
           <p className="text-xs text-slate">Built for campus placements</p>
         </div>

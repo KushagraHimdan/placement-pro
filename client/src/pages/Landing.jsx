@@ -14,7 +14,7 @@ export default function Landing() {
       </main>
       <Footer />
 
-      <div className="fixed bottom-6 right-6 bg-ink text-paper text-xs rounded-md p-2 flex gap-2 z-50">
+      <div className="fixed bottom-8 right-6 bg-ink text-paper text-xs rounded-full p-2 flex gap-2 z-50 shadow-lg shadow-ink/20">
         {['student', 'tpo', 'recruiter'].map((r) => (
           <button
             key={r}

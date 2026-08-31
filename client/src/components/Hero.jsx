@@ -32,7 +32,7 @@ export default function Hero({ role = 'student' }) {
   const content = ROLE_CONTENT[role]
 
   return (
-    <section className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-[1.15fr_1fr] gap-10 items-center">
+    <section className="max-w-7xl mx-auto px-8 lg:px-12 py-20 grid md:grid-cols-[1.15fr_1fr] gap-16 items-center">
       <div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
