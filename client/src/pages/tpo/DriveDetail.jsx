@@ -28,6 +28,7 @@ export default function DriveDetail() {
   const [updatingId, setUpdatingId] = useState(null)
   const [matching, setMatching] = useState(false)
   const [matchMessage, setMatchMessage] = useState('')
+  const [statusMessage, setStatusMessage] = useState({ appId: null, text: '', type: '' })
 
   const fetchAll = async () => {
     try {
@@ -50,11 +51,17 @@ export default function DriveDetail() {
 
   const handleStatusChange = async (applicationId, newStatus) => {
     setUpdatingId(applicationId)
+    setStatusMessage({ appId: null, text: '', type: '' })
     try {
       await api.patch(`/applications/${applicationId}/status`, { status: newStatus })
+      setStatusMessage({ appId: applicationId, text: `Moved to ${newStatus}`, type: 'success' })
       await fetchAll()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update status')
+      setStatusMessage({
+        appId: applicationId,
+        text: err.response?.data?.message || 'Failed to update status',
+        type: 'error',
+      })
     } finally {
       setUpdatingId(null)
     }
@@ -96,6 +103,32 @@ export default function DriveDetail() {
 
   if (loading) return <LoadingState label="Loading..." />
   if (!drive) return <p className="text-professional text-sm">Drive not found</p>
+
+  const renderStatusActions = (app) => (
+    <>
+      {STATUS_FLOW[app.status].length > 0 ? (
+        <div className="flex gap-2">
+          {STATUS_FLOW[app.status].map((nextStatus) => (
+            <button
+              key={nextStatus}
+              onClick={() => handleStatusChange(app._id, nextStatus)}
+              disabled={updatingId === app._id}
+              className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
+            >
+              {nextStatus}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <span className="text-xs text-slate">Final</span>
+      )}
+      {statusMessage.appId === app._id && (
+        <p className={`text-xs mt-2 ${statusMessage.type === 'success' ? 'text-authority' : 'text-professional'}`}>
+          {statusMessage.text}
+        </p>
+      )}
+    </>
+  )
 
   return (
     <div>
@@ -152,22 +185,7 @@ export default function DriveDetail() {
                 {app.aiMatch?.matchScore !== undefined && (
                   <p className="text-xs text-slate font-mono mb-2">AI score: {app.aiMatch.matchScore}/100</p>
                 )}
-                {STATUS_FLOW[app.status].length > 0 ? (
-                  <div className="flex gap-2 mt-2">
-                    {STATUS_FLOW[app.status].map((nextStatus) => (
-                      <button
-                        key={nextStatus}
-                        onClick={() => handleStatusChange(app._id, nextStatus)}
-                        disabled={updatingId === app._id}
-                        className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
-                      >
-                        {nextStatus}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate">Final</span>
-                )}
+                <div className="mt-2">{renderStatusActions(app)}</div>
               </div>
             ))}
           </div>
@@ -197,24 +215,7 @@ export default function DriveDetail() {
                     <td className="px-4 py-3 font-mono text-ink">
                       {app.aiMatch?.matchScore !== undefined ? `${app.aiMatch.matchScore}/100` : '—'}
                     </td>
-                    <td className="px-4 py-3">
-                      {STATUS_FLOW[app.status].length > 0 ? (
-                        <div className="flex gap-2">
-                          {STATUS_FLOW[app.status].map((nextStatus) => (
-                            <button
-                              key={nextStatus}
-                              onClick={() => handleStatusChange(app._id, nextStatus)}
-                              disabled={updatingId === app._id}
-                              className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-authority hover:text-authority transition-colors disabled:opacity-40 capitalize"
-                            >
-                              {nextStatus}
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-slate">Final</span>
-                      )}
-                    </td>
+                    <td className="px-4 py-3">{renderStatusActions(app)}</td>
                   </tr>
                 ))}
               </tbody>

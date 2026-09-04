@@ -26,6 +26,7 @@ export default function DriveDetail() {
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState(null)
+  const [statusMessage, setStatusMessage] = useState({ appId: null, text: '', type: '' })
 
   const fetchAll = async () => {
     try {
@@ -48,11 +49,17 @@ export default function DriveDetail() {
 
   const handleStatusChange = async (applicationId, newStatus) => {
     setUpdatingId(applicationId)
+    setStatusMessage({ appId: null, text: '', type: '' })
     try {
       await api.patch(`/applications/${applicationId}/status`, { status: newStatus })
+      setStatusMessage({ appId: applicationId, text: `Moved to ${newStatus}`, type: 'success' })
       await fetchAll()
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update status')
+      setStatusMessage({
+        appId: applicationId,
+        text: err.response?.data?.message || 'Failed to update status',
+        type: 'error',
+      })
     } finally {
       setUpdatingId(null)
     }
@@ -60,6 +67,32 @@ export default function DriveDetail() {
 
   if (loading) return <LoadingState label="Loading..." />
   if (!drive) return <p className="text-professional text-sm">Drive not found</p>
+
+  const renderStatusActions = (app) => (
+    <>
+      {STATUS_FLOW[app.status].length > 0 ? (
+        <div className="flex gap-2">
+          {STATUS_FLOW[app.status].map((nextStatus) => (
+            <button
+              key={nextStatus}
+              onClick={() => handleStatusChange(app._id, nextStatus)}
+              disabled={updatingId === app._id}
+              className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-professional hover:text-professional transition-colors disabled:opacity-40 capitalize"
+            >
+              {nextStatus}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <span className="text-xs text-slate">Final</span>
+      )}
+      {statusMessage.appId === app._id && (
+        <p className={`text-xs mt-2 ${statusMessage.type === 'success' ? 'text-signal' : 'text-professional'}`}>
+          {statusMessage.text}
+        </p>
+      )}
+    </>
+  )
 
   return (
     <div>
@@ -78,49 +111,53 @@ export default function DriveDetail() {
       {applications.length === 0 ? (
         <EmptyState message="No applications yet." />
       ) : (
-        <div className="border border-line rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-slate/5 text-slate text-xs uppercase font-mono">
-              <tr>
-                <th className="text-left px-4 py-3">Name</th>
-                <th className="text-left px-4 py-3">Email</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-left px-4 py-3">Move to</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app) => (
-                <tr key={app._id} className="border-t border-line">
-                  <td className="px-4 py-3 text-ink">{app.student?.name}</td>
-                  <td className="px-4 py-3 text-slate">{app.student?.email}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
-                      {app.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {STATUS_FLOW[app.status].length > 0 ? (
-                      <div className="flex gap-2">
-                        {STATUS_FLOW[app.status].map((nextStatus) => (
-                          <button
-                            key={nextStatus}
-                            onClick={() => handleStatusChange(app._id, nextStatus)}
-                            disabled={updatingId === app._id}
-                            className="text-xs px-2.5 py-1 rounded-md border border-line text-slate hover:border-professional hover:text-professional transition-colors disabled:opacity-40 capitalize"
-                          >
-                            {nextStatus}
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-slate">Final</span>
-                    )}
-                  </td>
+        <>
+          {/* Mobile: stacked cards */}
+          <div className="md:hidden space-y-3">
+            {applications.map((app) => (
+              <div key={app._id} className="border border-line rounded-lg p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <p className="text-ink font-medium">{app.student?.name}</p>
+                    <p className="text-slate text-xs">{app.student?.email}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
+                    {app.status}
+                  </span>
+                </div>
+                <div className="mt-2">{renderStatusActions(app)}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: full table */}
+          <div className="hidden md:block border border-line rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-slate/5 text-slate text-xs uppercase font-mono">
+                <tr>
+                  <th className="text-left px-4 py-3">Name</th>
+                  <th className="text-left px-4 py-3">Email</th>
+                  <th className="text-left px-4 py-3">Status</th>
+                  <th className="text-left px-4 py-3">Move to</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {applications.map((app) => (
+                  <tr key={app._id} className="border-t border-line">
+                    <td className="px-4 py-3 text-ink">{app.student?.name}</td>
+                    <td className="px-4 py-3 text-slate">{app.student?.email}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-mono capitalize ${STATUS_STYLES[app.status]}`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">{renderStatusActions(app)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )
