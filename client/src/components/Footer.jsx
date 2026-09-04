@@ -1,3 +1,5 @@
+import { smoothScrollTo } from '../lib/scrollTo'
+
 export default function Footer() {
   return (
     <footer className="border-t border-line mt-20">
@@ -12,8 +14,8 @@ export default function Footer() {
         <div>
           <p className="text-xs uppercase tracking-wide text-slate mb-4">Product</p>
           <ul className="space-y-2 text-sm">
-            <li><a href="#features" className="text-slate hover:text-ink transition-colors">Features</a></li>
-            <li><a href="#how-it-works" className="text-slate hover:text-ink transition-colors">How it works</a></li>
+            <li><a href="#features" onClick={(e) => smoothScrollTo(e, 'features')} className="text-slate hover:text-ink transition-colors">Features</a></li>
+            <li><a href="#how-it-works" onClick={(e) => smoothScrollTo(e, 'how-it-works')} className="text-slate hover:text-ink transition-colors">How it works</a></li>
             <li><a href="/login" className="text-slate hover:text-ink transition-colors">Log in</a></li>
           </ul>
         </div>

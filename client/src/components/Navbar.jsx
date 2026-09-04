@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ThemeToggle from './ThemeToggle'
+import { smoothScrollTo } from '../lib/scrollTo'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -10,8 +11,8 @@ export default function Navbar() {
         <a href="/" className="font-mono text-2xl font-medium tracking-tight text-ink">PlacementPro</a>
 
         <div className="hidden md:flex items-center gap-6">
-          <a href="#features" className="text-sm text-slate hover:text-ink transition-colors">Features</a>
-          <a href="#how-it-works" className="text-sm text-slate hover:text-ink transition-colors">How it works</a>
+          <a href="#features" onClick={(e) => smoothScrollTo(e, 'features')} className="text-sm text-slate hover:text-ink transition-colors">Features</a>
+          <a href="#how-it-works" onClick={(e) => smoothScrollTo(e, 'how-it-works')} className="text-sm text-slate hover:text-ink transition-colors">How it works</a>
           <a href="/login" className="text-sm text-slate hover:text-ink transition-colors">Log in</a>
           <a href="/register" className="text-sm px-4 py-2 rounded-md bg-ink text-paper hover:opacity-90 transition-opacity">
             Get started
@@ -32,8 +33,8 @@ export default function Navbar() {
 
       {open && (
         <div className="md:hidden px-6 pb-4 flex flex-col gap-4 border-t border-line pt-4">
-          <a href="#features" className="text-sm text-slate">Features</a>
-          <a href="#how-it-works" className="text-sm text-slate">How it works</a>
+          <a href="#features" onClick={(e) => { smoothScrollTo(e, 'features'); setOpen(false) }} className="text-sm text-slate">Features</a>
+          <a href="#how-it-works" onClick={(e) => { smoothScrollTo(e, 'how-it-works'); setOpen(false) }} className="text-sm text-slate">How it works</a>
           <a href="/login" className="text-sm text-slate">Log in</a>
           <a href="/register" className="text-sm px-4 py-2 rounded-md bg-ink text-paper text-center">Get started</a>
         </div>

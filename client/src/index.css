@@ -38,6 +38,7 @@ body {
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--color-line) transparent;
+  scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar {
