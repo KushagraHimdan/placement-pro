@@ -1,22 +1,23 @@
-import { useState } from 'react'
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/useAuth'
-import ThemeToggle from './ThemeToggle'
+import { useState } from "react";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import ThemeToggle from "./ThemeToggle";
+import NotificationBell from "./NotificationBell";
 
 const NAV_ITEMS = [
-  { to: '/tpo/dashboard', label: 'Drives' },
-  { to: '/tpo/post-drive', label: 'Post a drive' },
-]
+  { to: "/tpo/dashboard", label: "Drives" },
+  { to: "/tpo/post-drive", label: "Post a drive" },
+];
 
 export default function TPOLayout() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-paper flex flex-col">
@@ -30,7 +31,7 @@ export default function TPOLayout() {
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-sm transition-colors ${isActive ? 'text-authority font-medium' : 'text-slate hover:text-ink'}`
+                    `text-sm transition-colors ${isActive ? "text-authority font-medium" : "text-slate hover:text-ink"}`
                   }
                 >
                   {item.label}
@@ -39,9 +40,15 @@ export default function TPOLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-slate hidden sm:inline">{user?.name}</span>
+            <span className="text-sm text-slate hidden sm:inline">
+              {user?.name}
+            </span>
+            <NotificationBell />
             <ThemeToggle />
-            <button onClick={handleLogout} className="text-sm text-slate hover:text-professional transition-colors hidden md:inline">
+            <button
+              onClick={handleLogout}
+              className="text-sm text-slate hover:text-professional transition-colors hidden md:inline"
+            >
               Log out
             </button>
             <button
@@ -49,7 +56,14 @@ export default function TPOLayout() {
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 {menuOpen ? (
                   <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
                 ) : (
@@ -68,13 +82,16 @@ export default function TPOLayout() {
                 to={item.to}
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-sm ${isActive ? 'text-authority font-medium' : 'text-slate'}`
+                  `text-sm ${isActive ? "text-authority font-medium" : "text-slate"}`
                 }
               >
                 {item.label}
               </NavLink>
             ))}
-            <button onClick={handleLogout} className="text-sm text-slate text-left">
+            <button
+              onClick={handleLogout}
+              className="text-sm text-slate text-left"
+            >
               Log out
             </button>
           </div>
@@ -84,5 +101,5 @@ export default function TPOLayout() {
         <Outlet />
       </main>
     </div>
-  )
+  );
 }

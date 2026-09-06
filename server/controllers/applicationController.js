@@ -4,6 +4,7 @@ const StudentProfile = require("../models/StudentProfile");
 const { checkEligibility } = require("../services/eligibilityService");
 const AuditLog = require('../models/AuditLog');
 const { isValidTransition, buildStatusHistoryEntry } = require('../services/applicationStatusService');
+const { notifyUser } = require('../services/notificationService');
 
 const applyToDrive = async (req, res) => {
   try {
@@ -106,13 +107,24 @@ const updateApplicationStatus = async (req, res) => {
     application.statusHistory.push(historyEntry);
     await application.save();
 
-    // Record this action in the audit trail
+        // Record this action in the audit trail
     await AuditLog.create({
       action: 'APPLICATION_STATUS_CHANGED',
       performedBy: req.user._id,
       targetType: 'Application',
       targetId: application._id,
       details: { from: currentStatus, to: newStatus, note: note || '' },
+    });
+
+    // Notify the student — in-app + email. Failures here are logged but never block the response,
+    // since notificationService's sendEmail already swallows its own errors gracefully (Task 26).
+    await notifyUser({
+      userId: application.student,
+      title: `Application status updated: ${newStatus}`,
+      message: `Your application status changed from "${currentStatus}" to "${newStatus}"${note ? ` — ${note}` : ''}.`,
+      type: 'status_change',
+      relatedApplication: application._id,
+      relatedDrive: application.drive,
     });
 
     res.status(200).json({
